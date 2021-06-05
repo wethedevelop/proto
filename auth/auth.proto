@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "github.com/wethedevelop/proto/atuh";
+
+package auth;
+
+// 第一方登录（区别于github这样的第三方登录）
+service AccountAuth {
+  // 注册接口
+  rpc Signup (SignupRequest) returns (User) {}
+}
+
+// 登录请求
+message SignupRequest {
+  string account = 1;
+  string password = 2;
+}
+
+// 用户结构
+message User {
+  string Nickname = 1;
+  string id = 2;
+}
