@@ -26,8 +26,8 @@ type AccountAuthClient interface {
 	Check(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*User, error)
 	// 更新用户资料
 	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*User, error)
-	// 通过用户ID获取用户资料
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
+	// 特权：通过用户ID获取用户资料
+	DevGetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type accountAuthClient struct {
@@ -74,9 +74,9 @@ func (c *accountAuthClient) Update(ctx context.Context, in *UpdateRequest, opts 
 	return out, nil
 }
 
-func (c *accountAuthClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *accountAuthClient) DevGetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/auth.AccountAuth/GetUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/auth.AccountAuth/DevGetUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,8 +95,8 @@ type AccountAuthServer interface {
 	Check(context.Context, *TokenRequest) (*User, error)
 	// 更新用户资料
 	Update(context.Context, *UpdateRequest) (*User, error)
-	// 通过用户ID获取用户资料
-	GetUser(context.Context, *GetUserRequest) (*User, error)
+	// 特权：通过用户ID获取用户资料
+	DevGetUser(context.Context, *GetUserRequest) (*User, error)
 	mustEmbedUnimplementedAccountAuthServer()
 }
 
@@ -116,8 +116,8 @@ func (UnimplementedAccountAuthServer) Check(context.Context, *TokenRequest) (*Us
 func (UnimplementedAccountAuthServer) Update(context.Context, *UpdateRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedAccountAuthServer) GetUser(context.Context, *GetUserRequest) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+func (UnimplementedAccountAuthServer) DevGetUser(context.Context, *GetUserRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DevGetUser not implemented")
 }
 func (UnimplementedAccountAuthServer) mustEmbedUnimplementedAccountAuthServer() {}
 
@@ -204,20 +204,20 @@ func _AccountAuth_Update_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountAuth_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AccountAuth_DevGetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountAuthServer).GetUser(ctx, in)
+		return srv.(AccountAuthServer).DevGetUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.AccountAuth/GetUser",
+		FullMethod: "/auth.AccountAuth/DevGetUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountAuthServer).GetUser(ctx, req.(*GetUserRequest))
+		return srv.(AccountAuthServer).DevGetUser(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -246,8 +246,8 @@ var AccountAuth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccountAuth_Update_Handler,
 		},
 		{
-			MethodName: "GetUser",
-			Handler:    _AccountAuth_GetUser_Handler,
+			MethodName: "DevGetUser",
+			Handler:    _AccountAuth_DevGetUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

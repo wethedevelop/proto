@@ -14,8 +14,8 @@ service AccountAuth {
   rpc Check (TokenRequest) returns (User) {}
   // 更新用户资料
   rpc Update (UpdateRequest) returns (User) {}
-  // 通过用户ID获取用户资料
-  rpc GetUser (GetUserRequest) returns (User) {}
+  // 特权：通过用户ID获取用户资料
+  rpc DevGetUser (GetUserRequest) returns (User) {}
 }
 
 // 注册请求
