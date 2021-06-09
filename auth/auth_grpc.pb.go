@@ -21,7 +21,7 @@ type AccountAuthClient interface {
 	// 注册接口
 	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*User, error)
 	// 登录接口
-	Signin(ctx context.Context, in *SigninRequest, opts ...grpc.CallOption) (*User, error)
+	Signin(ctx context.Context, in *SigninRequest, opts ...grpc.CallOption) (*TokenResponse, error)
 	// 通过Token验证用户身份
 	Check(ctx context.Context, in *TokenRequest, opts ...grpc.CallOption) (*User, error)
 	// 更新用户资料
@@ -47,8 +47,8 @@ func (c *accountAuthClient) Signup(ctx context.Context, in *SignupRequest, opts 
 	return out, nil
 }
 
-func (c *accountAuthClient) Signin(ctx context.Context, in *SigninRequest, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
+func (c *accountAuthClient) Signin(ctx context.Context, in *SigninRequest, opts ...grpc.CallOption) (*TokenResponse, error) {
+	out := new(TokenResponse)
 	err := c.cc.Invoke(ctx, "/auth.AccountAuth/Signin", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ type AccountAuthServer interface {
 	// 注册接口
 	Signup(context.Context, *SignupRequest) (*User, error)
 	// 登录接口
-	Signin(context.Context, *SigninRequest) (*User, error)
+	Signin(context.Context, *SigninRequest) (*TokenResponse, error)
 	// 通过Token验证用户身份
 	Check(context.Context, *TokenRequest) (*User, error)
 	// 更新用户资料
@@ -107,7 +107,7 @@ type UnimplementedAccountAuthServer struct {
 func (UnimplementedAccountAuthServer) Signup(context.Context, *SignupRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Signup not implemented")
 }
-func (UnimplementedAccountAuthServer) Signin(context.Context, *SigninRequest) (*User, error) {
+func (UnimplementedAccountAuthServer) Signin(context.Context, *SigninRequest) (*TokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Signin not implemented")
 }
 func (UnimplementedAccountAuthServer) Check(context.Context, *TokenRequest) (*User, error) {
