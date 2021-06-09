@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/wethedevelop/proto/atuh";
+option go_package = "github.com/wethedevelop/proto/auth";
 
 package auth;
 
@@ -8,16 +8,46 @@ package auth;
 service AccountAuth {
   // 注册接口
   rpc Signup (SignupRequest) returns (User) {}
+  // 登录接口
+  rpc Signin (SigninRequest) returns (User) {}
+  // 通过Token验证用户身份
+  rpc Check (TokenRequest) returns (User) {}
+  // 更新用户资料
+  rpc Update (UpdateRequest) returns (User) {}
+  // 通过用户ID获取用户资料
+  rpc GetUser (GetUserRequest) returns (User) {}
 }
 
-// 登录请求
+// 注册请求
 message SignupRequest {
   string account = 1;
   string password = 2;
 }
 
+// 登录请求
+message SigninRequest {
+  string account = 1;
+  string password = 2;
+}
+
+// token来自于cookie或者移动客户端的header
+message TokenRequest {
+  string token = 1;
+}
+
+// 更新用户资料
+message UpdateRequest {
+  string token = 1;
+  string Nickname = 2;
+}
+
+// 通过用户ID获取用户资料
+message GetUserRequest {
+  int64 id = 1;
+}
+
 // 用户结构
 message User {
   string Nickname = 1;
-  string id = 2;
+  int64 id = 2;
 }
